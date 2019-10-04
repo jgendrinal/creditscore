@@ -1,0 +1,12 @@
+Package: creditscore
+Title: Tidy workflows for credit scoring
+Version: 0.0.0.9000
+Authors@R: 
+    person(given = "Jose",
+           family = "Endrinal",
+           role = c("aut", "cre"),
+           email = "francis.endrinal@gmail.com")
+Description: Tidy workflows for credit scoring
+License: CCBY-4.0
+Encoding: UTF-8
+LazyData: true
