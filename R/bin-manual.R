@@ -24,6 +24,8 @@
 #'            bad,
 #'            age = c_l(40, 55),
 #'            duration = c_r(15, 35))
+#' @import dplyr rlang assertthat
+#' @export
 bin_manual <- function(.data, bad, ..., check = FALSE) {
 
   # Check if .data is data.frame or tibble
@@ -43,14 +45,14 @@ bin_manual <- function(.data, bad, ..., check = FALSE) {
     result <- rep(NA_character_, nrow(.data))
     for (j in bin_plan[[i]]) {
       # Check if element is in interval then map interval to result
-      target <- map_lgl(.data[[i]], function(j, .x) {
+      target <- purrr::map_lgl(.data[[i]], function(j, .x) {
         if (j$bounds == "[)") {
           .x >= j$l & .x < j$r
         } else if (j$bounds == "(]") {
           .x > j$l & .x <= j$r
         }
       })
-      result[target] <- str_c(j$l, " - ", j$r)
+      result[target] <- stringr::str_c(j$l, " - ", j$r)
     }
     data_result <- .data %>%
       mutate(!!var := result)

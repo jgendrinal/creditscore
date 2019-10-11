@@ -6,7 +6,13 @@ Authors@R:
            family = "Endrinal",
            role = c("aut", "cre"),
            email = "francis.endrinal@gmail.com")
-Description: Tidy workflows for credit scoring
+Description: A suite of workflow functions meant to aid the user in the 
+    scorecard modelling process, complete with binning algorithms, model 
+    fitting, scorecard scaling, and scoring that conforms to tidy principles.
+Imports: dplyr, 
+         rlang, 
+         assertthat
 License: CCBY-4.0
 Encoding: UTF-8
 LazyData: true
+RoxygenNote: 6.1.1
