@@ -14,6 +14,9 @@ bin_manual(.data, bad, ..., check = FALSE)
 \item{...}{Named lists separated by commas containing mappings of variables
 to a transformation. Cuts for each variable are separated by \code{c_l} or
 \code{c_r}.}
+
+\item{check}{A logical, if TRUE, \code{bin_manual} will check for a minimum
+of 30 borrowers for each bin. FALSE by default.}
 }
 \value{
 A tibble or data.frame with the variables transformed into character
@@ -35,6 +38,6 @@ transformed into categories.
 bin_manual(german, bad, age = c_l(40, 55))
 bin_manual(german,
            bad,
-           age = c_l(40, 55),
-           duration = c_r(15, 35))
+           duration = c_r(15, 32),
+           check = TRUE)
 }

@@ -15,6 +15,8 @@
 #' @param ... Named lists separated by commas containing mappings of variables
 #'   to a transformation. Cuts for each variable are separated by \code{c_l} or
 #'   \code{c_r}.
+#' @param check A logical, if TRUE, \code{bin_manual} will check for a minimum
+#'     of 30 borrowers for each bin. FALSE by default.
 #' @return A tibble or data.frame with the variables transformed into character
 #'   vectors.
 #'
@@ -22,8 +24,8 @@
 #' bin_manual(german, bad, age = c_l(40, 55))
 #' bin_manual(german,
 #'            bad,
-#'            age = c_l(40, 55),
-#'            duration = c_r(15, 35))
+#'            duration = c_r(15, 32),
+#'            check = TRUE)
 #' @import dplyr rlang assertthat
 #' @importFrom purrr map_lgl
 #' @importFrom stringr str_c
@@ -42,21 +44,21 @@ bin_manual <- function(.data, bad, ..., check = FALSE) {
   for (i in names(bin_plan)) {
 
     # Check if variable name exists in the dataset
-    assert_that(i %in% names(data),
+    assert_that(i %in% names(.data),
                 msg = str_c("Variable ", i, " not in .data"))
 
     var <- sym(i)
     result <- rep(NA_character_, nrow(.data))
     for (j in bin_plan[[i]]) {
       # Check if element is in interval then map interval to result
-      target <- purrr::map_lgl(.data[[i]], function(j, .x) {
+      target <- map_lgl(.data[[i]], function(.x) {
         if (j$bounds == "[)") {
           .x >= j$l & .x < j$r
         } else if (j$bounds == "(]") {
           .x > j$l & .x <= j$r
         }
       })
-      result[target] <- stringr::str_c(j$l, " - ", j$r)
+      result[target] <- str_c(j$l, " - ", j$r)
     }
     data_result <- .data %>%
       mutate(!!var := result)
