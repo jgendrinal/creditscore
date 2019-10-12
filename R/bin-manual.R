@@ -25,6 +25,8 @@
 #'            age = c_l(40, 55),
 #'            duration = c_r(15, 35))
 #' @import dplyr rlang assertthat
+#' @importFrom purrr map_lgl
+#' @importFrom stringr str_c
 #' @export
 bin_manual <- function(.data, bad, ..., check = FALSE) {
 
@@ -39,7 +41,9 @@ bin_manual <- function(.data, bad, ..., check = FALSE) {
   bin_plan <- list2(...)
   for (i in names(bin_plan)) {
 
-    # TODO Check if variable name exists in the dataset
+    # Check if variable name exists in the dataset
+    assert_that(i %in% names(data),
+                msg = str_c("Variable ", i, " not in .data"))
 
     var <- sym(i)
     result <- rep(NA_character_, nrow(.data))
@@ -57,10 +61,7 @@ bin_manual <- function(.data, bad, ..., check = FALSE) {
     data_result <- .data %>%
       mutate(!!var := result)
     if (check) {
-      assert_that(check_bads(data_result, bad, !!var),
-                  msg = "Variable should have 30 bad borrowers")
-      assert_that(is_monotonic(check_bads(data_result[[bad]],
-                                          data_result[[var]])),
+      assert_that(has_30_bad(data_result, bad, !!var),
                   msg = "Variable should have 30 bad borrowers")
     }
     .data <- data_result

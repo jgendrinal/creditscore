@@ -11,7 +11,9 @@ Description: A suite of workflow functions meant to aid the user in the
     fitting, scorecard scaling, and scoring that conforms to tidy principles.
 Imports: dplyr, 
          rlang, 
-         assertthat
+         assertthat, 
+         purrr, 
+         stringr
 License: CCBY-4.0
 Encoding: UTF-8
 LazyData: true

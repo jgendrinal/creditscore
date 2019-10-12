@@ -1,12 +1,3 @@
-# Check if there are thirty bad borrowers for each grouped segment
-check_bads <- function(df, bad, vars) {
-  vars <- syms(vars)
-  group_by(df, !!!vars) %>%
-    filter(bad == 1) %>%
-    group_size() %>%
-    all(. > 30)
-}
-
 # Check if the bin/segment has good borrowers
 has_good <- function(bad, .) {
   var <- cbind(.)
@@ -28,11 +19,13 @@ has_bad <- function(bad, .) {
 }
 
 # Check if the bin/segment has bad borrowers
-has_30_bad <- function(bad, .) {
-  var <- cbind(.)
-  cbind(bad, var) %>%
-    group_by(var) %>%
-    filter(bad == 1) %>%
+has_30_bad <- function(.data, bad, .) {
+  var <- enquo(.)
+  bad <- enquo(bad)
+  .data %>%
+    select(!!bad, !!var) %>%
+    group_by(!!var) %>%
+    filter(!!bad == 1) %>%
     group_size() %>%
     all(. >= 30)
 }
