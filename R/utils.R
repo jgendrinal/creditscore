@@ -53,9 +53,6 @@ calculate_woes <- function(.var, .bad) {
 }
 
 replace_as_woes <- function(.var, .bad) {
-  # Check that bad is 1 or 0
-
-
   # Calculate woes
   woe_legend <- calculate_woes(.var, .bad)
 
