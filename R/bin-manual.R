@@ -40,8 +40,8 @@ bin_manual <- function(.data, bad, ..., check = FALSE) {
   # Process bad, get from .data if not input by the user
   bad <- bad_handler(.data, bad)
 
-  # TODO Check if bad is a numeric that is `1` or `0`
-
+  # Check if bad is a numeric that is `1` or `0`
+  assert_bad_numeric_binary(.data, bad)
 
   # Warn if ... is not a list of intervals
   bin_plan <- list2(...)
