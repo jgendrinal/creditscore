@@ -92,6 +92,7 @@ fit_logit <- function(.data, formula) {
       calculate_woes(data[["val"]], data[[bad]])
     })) %>%
     select(-data)
+  attr(result, "scaled") <- FALSE
 
   # Return model result
   result
