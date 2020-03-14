@@ -1,6 +1,6 @@
 #' Score input data using the scorecard model
 #'
-#' Borrower data is placed into \code{score_card} together with the model to
+#' Borrower data is placed into \code{credit_score} together with the model to
 #' score each borrower.
 #'
 #' @param .data A tibble of borrower information with the variable names that
@@ -10,7 +10,7 @@
 #'
 #' @export
 
-score_card <- function(.data, model) {
+credit_score <- function(.data, model) {
 
   # Convert .data values to WOES, if applicable
 
