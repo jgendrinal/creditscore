@@ -23,12 +23,12 @@
 #' @export
 scale_double_odds <- function(score_model, odds_fifty = 600, pdo = 20) {
 
-  # Turn scaling mode on
-  attr(score_model, "scaling") <- TRUE
-
   # Append offset, odds
   score_model$factor <- pdo/log(2)
-  score_model$offset <- odds_fifty - (pdo/log(2))*log(50)
+  score_model$off <- odds_fifty - (pdo/log(2))*log(50)
+
+  # Turn scaling mode on
+  attr(score_model, "scaled") <- TRUE
 
   # Return model result
   score_model
