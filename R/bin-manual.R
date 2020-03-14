@@ -74,6 +74,7 @@ bin_manual <- function(.data, bad, ..., check = FALSE) {
   }
   # Add attributes to data_result before returning
   attr(.data, "bad") <- as_string(bad)
+  attr(.data, "binplan") <- bin_plan
 
   # Return binned result
   .data

@@ -79,6 +79,7 @@ fit_logit <- function(.data, formula) {
 
 
   # Add attributes, legends to result
+  attr(result, "binplan") <- attr(.data, "binplan")
   attr(result, "bad") <- as_string(bad)
   result$woes <- bind_cols(select(.data, !!bad),
                            select_if(.data, is.character) %>%

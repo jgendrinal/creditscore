@@ -8,17 +8,43 @@
 #' @param model A scorecard model object
 #' @return A numeric vector of credit scores, whether scaled or not
 #'
+#' @import dplyr rlang
+#' @importFrom assertthat assert_that
+#' @importFrom stats predict
 #' @export
 
 credit_score <- function(.data, model) {
 
   # Convert .data values to WOES, if applicable
+  if (!is.null(attr(model, "binplan"))) {
+    binplan <- attr(model, "binplan")
+    new_data <- bin_manual(.data, attr(model, "bad"), !!!binplan)
+  }
 
-  # Use predict.glm function to give probabilities of default for each borrower
+  if (!is.null(model$woes)) {
 
-  # Scale according to input, if applicable
-  if (attr(model, "scaled")) {
+    # Check if WOE variables exist in data
+    assert_that(names(model$woes) %in% names(new_data),
+                "Some model WOE names do not exists in .data")
+
+    # Recode variable values in data with WOEs
+    for (i in model$woes$var) {
+      woeplam <- model$woes$woe[[match(i, model$woes$var)]]$woe
+      names(woeplan) <- model$woes$woe[[match(i, model$woes$var)]]$var
+      woeplan <- lapply(split(woeplan, names(woeplan)), unname)
+      new_data <- recode(new_data,
+                         i,
+                         !!!woeplan)
+    }
 
   }
 
+  # Use predict.glm function to give probabilities of default for each borrower
+  result <- predict(model, new_data, type = "response")
+
+  # Scale according to input, if applicable
+  if (attr(model, "scaled")) {
+    result <- model$off + model$factor*result
+  }
+  result
 }
