@@ -21,26 +21,26 @@ credit_score <- function(.data, model) {
     new_data <- bin_manual(.data, attr(model, "bad"), !!!binplan)
   }
 
-  if (!is.null(model$woes)) {
+  if (!is.null(model[["woes"]])) {
 
     # Check if WOE variables exist in data
-    assert_that(names(model$woes) %in% names(new_data),
-                "Some model WOE names do not exists in .data")
+    assert_that(all(model[["woes"]]$var %in% names(new_data)),
+                msg = "Some model WOE names do not exists in .data")
 
     # Recode variable values in data with WOEs
-    for (i in model$woes$var) {
-      woeplam <- model$woes$woe[[match(i, model$woes$var)]]$woe
-      names(woeplan) <- model$woes$woe[[match(i, model$woes$var)]]$var
-      woeplan <- lapply(split(woeplan, names(woeplan)), unname)
-      new_data <- recode(new_data,
-                         i,
-                         !!!woeplan)
+    for (i in model[["woes"]]$var) {
+      woeplan <- model[["woes"]]$woe[[match(i, model[["woes"]]$var)]]$woe %>%
+        as.character
+      names(woeplan) <- model[["woes"]]$woe[[match(i, model[["woes"]]$var)]]$var
+      woeplan <- unlist(lapply(split(woeplan, names(woeplan)), unname))
+      i <- sym(i)
+      new_data <- mutate(new_data,
+                         !!i := recode(!!i, !!!woeplan) %>% as.numeric)
     }
-
   }
 
   # Use predict.glm function to give probabilities of default for each borrower
-  result <- predict(model, new_data, type = "response")
+  result <- predict(model, newdata = new_data, type = "response")
 
   # Scale according to input, if applicable
   if (attr(model, "scaled")) {
