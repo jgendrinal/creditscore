@@ -14,17 +14,24 @@ knitr::opts_chunk$set(
 ```
 # creditscore
 
-<!-- badges: start -->
-<!-- badges: end -->
+The goal of creditscore is to create tidy workflows for credit scorecard modelling. Verbs used in this package make it easier to understand how the models were built. Use of the pipe (`%>%`) allows the user to code models step-by-step. A final utility function allows the user to score borrowers given a credit scorecard model.  
 
-The goal of creditscore is to ...
+The creditscore model development framework has three main function groups:  
+
+1. `bin_manual`, `c_l`, `c_r` - Used to bin numeric variables  
+2. `fit_logit` - For taking data to fit into a logit model  
+3. `scale_manual`, `scale_double` - Scaling the scorecard models to a 400+ number system or as specified by the user
+
+The result of the workflow is a glm model object containing the scorecard model.  
+
+Finally, the utility function `score_credit` is the function that scores borrowers given their information and the model just created.  
 
 ## Installation
 
-You can install the released version of creditscore from [CRAN](https://CRAN.R-project.org) with:
+You can install the development version of creditscore from the [Github repo](https://github.com/jgendrinal/creditscore) with:
 
 ``` r
-install.packages("creditscore")
+devtools::install_github("jgendrinal/creditscore")
 ```
 
 ## Example
@@ -33,21 +40,31 @@ This is a basic example which shows you how to solve a common problem:
 
 ```{r example}
 library(creditscore)
-## basic example code
+library(dplyr)
+
+# Create scorecard model - with scaling
+card_model_scaled <- bin_manual(german,
+                         bad,
+                         duration = c_r(15, 32)) %>%
+  fit_logit(bad ~ duration + age + employed_since) %>% 
+  scale_double_odds(odds_fifty = 750, pdo = 20)
+
+# Without scaling
+card_model_noscale <- bin_manual(german,
+                         bad,
+                         duration = c_r(15, 32)) %>%
+  fit_logit(bad ~ duration + age + employed_since)
 ```
 
-What is special about using `README.Rmd` instead of just `README.md`? You can include R chunks like so:
+Now that we've built our models, let's see how they perform:  
 
-```{r cars}
-summary(cars)
+```{r}
+score_credit(slice(german, 1:30), card_model_scaled)
 ```
 
-You'll still need to render `README.Rmd` regularly, to keep `README.md` up-to-date.
-
-You can also embed plots, for example:
-
-```{r pressure, echo = FALSE}
-plot(pressure)
+```{r}
+score_credit(slice(german, 1:30), card_model_noscale)
 ```
 
-In that case, don't forget to commit and push the resulting figure files, so they display on GitHub!
+
+
