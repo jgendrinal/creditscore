@@ -44,7 +44,7 @@ score_credit <- function(.data, model) {
 
   # Scale according to input, if applicable
   if (attr(model, "scaled")) {
-    result <- model$off + model$factor*result
+    result <- model$off + model$factor*log(result)
   }
   result
 }
