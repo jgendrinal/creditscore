@@ -47,7 +47,7 @@ card_model_scaled <- bin_manual(german,
                          bad,
                          duration = c_r(15, 32)) %>%
   fit_logit(bad ~ duration + age + employed_since) %>% 
-  scale_double_odds(odds_fifty = 750, pdo = 20)
+  scale_double_odds(odds_fifty = 600, pdo = 20)
 
 # Without scaling
 card_model_noscale <- bin_manual(german,
