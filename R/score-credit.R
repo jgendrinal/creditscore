@@ -1,6 +1,6 @@
 #' Score input data using the scorecard model
 #'
-#' Borrower data is placed into \code{credit_score} together with the model to
+#' Borrower data is placed into \code{score_credit} together with the model to
 #' score each borrower.
 #'
 #' @param .data A tibble of borrower information with the variable names that
@@ -13,7 +13,7 @@
 #' @importFrom stats predict
 #' @export
 
-credit_score <- function(.data, model) {
+score_credit <- function(.data, model) {
 
   # Convert .data values to WOES, if applicable
   if (!is.null(attr(model, "binplan"))) {
