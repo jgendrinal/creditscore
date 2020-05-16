@@ -10,14 +10,12 @@ test_that("c_l and c_r only accept numeric, ascending vectors", {
 })
 
 test_that("c_l and c_r have the proper structure", {
+  expect_equal(c_l(2, 5, 7)[[1]]$l, -Inf)
+  expect_equal(c_l(2, 5, 7)[[4]]$r, Inf)
+  expect_equal(c_r(2, 5, 7)[[1]]$l, -Inf)
+  expect_equal(c_r(2, 5, 7)[[4]]$r, Inf)
   expect_equivalent(map(c_l(2, 5, 7), ~.$bounds) %>% unlist,
                     rep("[)", times = 4))
   expect_equivalent(map(c_r(2, 5, 7), ~.$bounds) %>% unlist,
                     rep("(]", times = 4))
 })
-
-# TODO test that each interval has a left and right
-
-# TODO test that first left is negative infiinity
-
-# TODO test that first right is positive infinity
