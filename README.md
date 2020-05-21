@@ -39,34 +39,21 @@ This is a basic example which shows you how to solve a common problem:
 ``` r
 library(creditscore)
 library(dplyr)
-#> 
-#> Attaching package: 'dplyr'
-#> The following objects are masked from 'package:stats':
-#> 
-#>     filter, lag
-#> The following objects are masked from 'package:base':
-#> 
-#>     intersect, setdiff, setequal, union
+```
 
+``` r
 # Create scorecard model - with scaling
 card_model_scaled <- bin_manual(german,
                          bad,
                          duration = c_r(15, 32)) %>%
   fit_logit(bad ~ duration + age + employed_since) %>% 
   scale_double_odds(odds_fifty = 600, pdo = 20)
-#> Warning: Unknown columns: `age`
-#> Warning: All elements of `...` must be named.
-#> Did you want `data = c(val, bad)`?
 
 # Without scaling
 card_model_noscale <- bin_manual(german,
                          bad,
                          duration = c_r(15, 32)) %>%
   fit_logit(bad ~ duration + age + employed_since)
-#> Warning: Unknown columns: `age`
-
-#> Warning: All elements of `...` must be named.
-#> Did you want `data = c(val, bad)`?
 ```
 
 Now that we’ve built our models, let’s see how they perform:

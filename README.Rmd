@@ -38,10 +38,12 @@ devtools::install_github("jgendrinal/creditscore")
 
 This is a basic example which shows you how to solve a common problem:
 
-```{r example}
+```{r setup, message=FALSE, cache=FALSE}
 library(creditscore)
 library(dplyr)
+```
 
+```{r example}
 # Create scorecard model - with scaling
 card_model_scaled <- bin_manual(german,
                          bad,
