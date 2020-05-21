@@ -41,7 +41,7 @@
 #' @import dplyr
 #' @importFrom purrr map map_dbl
 #' @importFrom stats binomial glm var
-#' @importFrom tidyr gather nest
+#' @importFrom tidyr gather nest pivot_longer
 #' @export
 fit_logit <- function(.data, formula) {
   # Deciding whether 'bad' variable should be explicitly defined by the user
@@ -72,6 +72,7 @@ fit_logit <- function(.data, formula) {
     # Convert all categorical variables to WOEs
     mutate_if(is.character, ~replace_as_woes(.x, !!bad)) -> df
 
+
   # Push to model object
   result <- glm(formula = formula,
                 data = df,
@@ -81,20 +82,46 @@ fit_logit <- function(.data, formula) {
   # Add attributes, legends to result
   attr(result, "binplan") <- attr(.data, "binplan")
   attr(result, "bad") <- as_string(bad)
+
   result$woes <- bind_cols(select(.data, !!bad),
-                           select_if(.data, is.character) %>%
-                             select(one_of(as.character(target)))
-                           # TODO Suppress warnings for this expression
-                           ) %>%
-    gather(key = "var", value = "val", -!!bad) %>%
-    nest(val, !!bad) %>%
+                           select(.data, c(!!!target)) %>%
+                             select_if(is.character)) %>%
+    pivot_longer(cols = -any_of(!!bad), names_to = "var", values_to = "val") %>%
+    group_by(var) %>%
+    nest() %>%
     mutate(woe = map(data, function(data) {
       bad <- as_string(bad)
       calculate_woes(data[["val"]], data[[bad]])
     })) %>%
     select(-data)
-  attr(result, "scaled") <- FALSE
 
-  # Return model result
+    attr(result, "scaled") <- FALSE
+
   result
 }
+
+#' @keywords internal
+calculate_woes <- function(.var, .bad) {
+  tibble(var = .var,
+         bad = .bad) %>%
+    group_by(var) %>%
+    summarize(bpct = sum(bad)/sum(.bad),
+              gpct = (n()-sum(bad))/(length(.bad)-sum(.bad))) %>%
+    mutate(woe = log(gpct/bpct)*100) %>%
+    select(var, woe)
+}
+
+#' @keywords internal
+replace_as_woes <- function(.var, .bad) {
+  # Calculate woes
+  woe_legend <- calculate_woes(.var, .bad)
+
+  map_dbl(.var, function(x) {
+    for (i in 1:nrow(woe_legend)) {
+      if (woe_legend[[i, 1]] == x) {
+        return(woe_legend[[i, 2]])
+      }
+    }
+  })
+}
+
