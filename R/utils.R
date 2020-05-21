@@ -1,4 +1,3 @@
-#' Check if the bin/segment has good borrowers
 #' @keywords internal
 has_good <- function(bad, .) {
   var <- cbind(.)
@@ -9,7 +8,6 @@ has_good <- function(bad, .) {
     all(. > 0)
 }
 
-#' Check if the bin/segment has bad borrowers
 #' @keywords internal
 has_bad <- function(bad, .) {
   var <- cbind(.)
@@ -20,7 +18,6 @@ has_bad <- function(bad, .) {
     all(. > 0)
 }
 
-#' Check if the bin/segment has bad borrowers
 #' @keywords internal
 has_30_bad <- function(.data, bad, .) {
   var <- enquo(.)
@@ -33,7 +30,6 @@ has_30_bad <- function(.data, bad, .) {
     all(. >= 30)
 }
 
-#' Check if the bin/segment is monotonic
 #' @keywords internal
 is_monotonic <- function(bad, .) {
   var <- cbind(.)
@@ -45,34 +41,6 @@ is_monotonic <- function(bad, .) {
         all(diff(.) <= 0))
 }
 
-#' Calculate WOEs for continuous variables
-#' @keywords internal
-calculate_woes <- function(.var, .bad) {
-  tibble(var = .var,
-         bad = .bad) %>%
-    group_by(var) %>%
-    summarize(bpct = sum(bad)/sum(.bad),
-              gpct = (n()-sum(bad))/(length(.bad)-sum(.bad))) %>%
-    mutate(woe = log(gpct/bpct)*100) %>%
-    select(var, woe)
-}
-
-#' @keywords internal
-replace_as_woes <- function(.var, .bad) {
-  # Calculate woes
-  woe_legend <- calculate_woes(.var, .bad)
-
-  map_dbl(.var, function(x) {
-    for (i in 1:nrow(woe_legend)) {
-      if (woe_legend[[i, 1]] == x) {
-        return(woe_legend[[i, 2]])
-      }
-    }
-  })
-}
-
-
-#' Check whether bad variable is binary
 #' @keywords internal
 check_binary_bad <- function(.data, bad) {
   any(
@@ -80,4 +48,3 @@ check_binary_bad <- function(.data, bad) {
     all(.data[[as_string(bad)]] %in% c(1, 0)),
   )
 }
-
