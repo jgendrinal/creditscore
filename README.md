@@ -3,6 +3,12 @@
 
 # creditscore
 
+<!-- badges: start -->
+
+[![License:
+MIT](https://img.shields.io/badge/license-MIT-green)](https://opensource.org/licenses/MIT)  
+<!-- badges: end -->
+
 The goal of creditscore is to create tidy workflows for credit scorecard
 modelling. Verbs used in this package make it easier to understand how
 the models were built. Use of the pipe (`%>%`) allows the user to code

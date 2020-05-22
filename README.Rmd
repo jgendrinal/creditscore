@@ -14,6 +14,10 @@ knitr::opts_chunk$set(
 ```
 # creditscore
 
+<!-- badges: start -->
+[![License: MIT](https://img.shields.io/badge/license-MIT-green)](https://opensource.org/licenses/MIT)  
+<!-- badges: end -->
+
 The goal of creditscore is to create tidy workflows for credit scorecard modelling. Verbs used in this package make it easier to understand how the models were built. Use of the pipe (`%>%`) allows the user to code models step-by-step. A final utility function allows the user to score borrowers given a credit scorecard model.  
 
 The creditscore model development framework has three main function groups:  
